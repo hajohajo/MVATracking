@@ -57,7 +57,7 @@ NtupleMaker::NtupleMaker(const edm::ParameterSet& Params)
         mvaValues = &d_mvaValues;
         beamspot_ = Params.getParameter<edm::InputTag>("beamspot");
 
-        if(Params.exists("outfile")) outFile = new TFile(Params.getParameter<string>("source").c_str(),"RECREATE");
+        if(Params.exists("outfile")) outFile = new TFile(Params.getParameter<string>("outfile").c_str(),"RECREATE");
         if(Params.exists("source")) source = Params.getParameter<string>("source");
         if(Params.exists("associator")) associatorName = Params.getParameter<string>("associator");
         if(Params.exists("simSource")) simSource = Params.getParameter<InputTag>("simSource");

@@ -23,7 +23,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(5)
+    input = cms.untracked.int32(512)
 )
 
 # Input source
@@ -32,11 +32,11 @@ process.source = cms.Source("PoolSource",
     secondaryFileNames = cms.untracked.vstring()
 )
 
-#process.options = cms.untracked.PSet(
-#    wantSummary = cms.untracked.bool(False),
-#    numberOfStreams = cms.untracked.uint32(0),
-#    numberOfThreads = cms.untracked.uint32(0)
-#)
+process.options = cms.untracked.PSet(
+    wantSummary = cms.untracked.bool(False),
+    numberOfStreams = cms.untracked.uint32(0),
+    numberOfThreads = cms.untracked.uint32(0)
+)
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
@@ -133,7 +133,7 @@ process.myAnalyzer = cms.EDAnalyzer("NtupleMaker",
                                     simSource=cms.InputTag("mix","MergedTrackTruth"),
                                     beamspot = cms.InputTag("offlineBeamSpot"),
                                     vertices = cms.InputTag("firstStepPrimaryVertices"),
-                                    outfile=cms.string('outputTuple/output_'+sys.argv[4]+"_"+sys.argv[3]+'.root'),
+                                    outfile=cms.string('./outputTuple/output_'+sys.argv[4]+"_"+sys.argv[3]+'.root'),
                                     associator=cms.string("quickTrackAssociatorByHits"),
                                     )
 
