@@ -95,6 +95,7 @@ class NtupleMaker : public edm::EDAnalyzer {
                 float tvAbsD0PV;
                 float tvMvaVal;
 
+		bool doMVA_;
                 TMVA::Reader* tmvaReader_;
 //                std::vector<std::string> mvaType_;
 		std::string mvaType_;

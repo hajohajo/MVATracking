@@ -69,26 +69,34 @@ NtupleMaker::NtupleMaker(const edm::ParameterSet& Params)
         trackHighPurityToken = consumes<edm::View<Track> >(edm::InputTag("selectHighPurity"));
         simTPToken = consumes<TrackingParticleCollection>(simSource);
 
+	doMVA_ = false;
+	std::string mvaFileName;
+	if(Params.exists("doMVA")) doMVA_ = Params.getParameter<bool>("doMVA");
+	if(Params.exists("mvaFileName"))mvaFileName = Params.getParameter<string>("mvaFileName");
 
-        TMVA::Reader* tmvaReader_ = new TMVA::Reader("!Color:Silent");
-        tmvaReader_->AddVariable("pt",&tvpt);
-        tmvaReader_->AddVariable("lostmidfrac",&tvLostMidFrac);
-        tmvaReader_->AddVariable("minlost",&tvMinLost);
-        tmvaReader_->AddVariable("nhits",&tvNhits);
-        tmvaReader_->AddVariable("relpterr",&tvRelPtErr);
-        tmvaReader_->AddVariable("eta",&tvEta);
-        tmvaReader_->AddVariable("chi2n_no1Dmod",&tvChi2n_no1Dmod);
-        tmvaReader_->AddVariable("chi2n",&tvChi2n);
-        tmvaReader_->AddVariable("nlayerslost",&tvNlayersLost);
-        tmvaReader_->AddVariable("nlayers3D",&tvNlayers3D);
-        tmvaReader_->AddVariable("nlayers",&tvNlayers);
-        tmvaReader_->AddVariable("ndof",&tvNdof);
-        if(mvaType_ == "Prompt"){
-                tmvaReader_->AddVariable("absd0PV",&tvAbsD0PV);
-                tmvaReader_->AddVariable("absdzPV",&tvAbsDzPV);
-                tmvaReader_->AddVariable("absdz",&tvAbsDz);
-                tmvaReader_->AddVariable("absd0",&tvAbsD0);
-        }
+	if(doMVA_){
+	        TMVA::Reader* tmvaReader_ = new TMVA::Reader("!Color:Silent");
+	        tmvaReader_->AddVariable("pt",&tvpt);
+	        tmvaReader_->AddVariable("lostmidfrac",&tvLostMidFrac);
+	        tmvaReader_->AddVariable("minlost",&tvMinLost);
+	        tmvaReader_->AddVariable("nhits",&tvNhits);
+	        tmvaReader_->AddVariable("relpterr",&tvRelPtErr);
+	        tmvaReader_->AddVariable("eta",&tvEta);
+	        tmvaReader_->AddVariable("chi2n_no1Dmod",&tvChi2n_no1Dmod);
+	        tmvaReader_->AddVariable("chi2n",&tvChi2n);
+	        tmvaReader_->AddVariable("nlayerslost",&tvNlayersLost);
+	        tmvaReader_->AddVariable("nlayers3D",&tvNlayers3D);
+	        tmvaReader_->AddVariable("nlayers",&tvNlayers);
+	        tmvaReader_->AddVariable("ndof",&tvNdof);
+	        if(mvaType_ == "Prompt"){
+	                tmvaReader_->AddVariable("absd0PV",&tvAbsD0PV);
+	                tmvaReader_->AddVariable("absdzPV",&tvAbsDzPV);
+	                tmvaReader_->AddVariable("absdz",&tvAbsDz);
+	                tmvaReader_->AddVariable("absd0",&tvAbsD0);
+	        }
+
+		tmvaReader_->BookMVA("BDTG",mvaFileName);
+	}
 
 	outTree = new TTree("NtupleTree","",1);
         outTree->Branch("fake",&tvFake,"fake/F");
@@ -111,7 +119,8 @@ NtupleMaker::NtupleMaker(const edm::ParameterSet& Params)
         outTree->Branch("absd0",&tvAbsD0,"absd0/F");
         outTree->Branch("absdzPV",&tvAbsDzPV,"absdzPV/F");
         outTree->Branch("absd0PV",&tvAbsD0PV,"absd0PV/F");
-        outTree->Branch("mvavals","std::vector<float>",&d_mvaValues);
+//        outTree->Branch("mvavals","std::vector<float>",&d_mvaValues);
+	outTree->Branch("mvaval",&tvMvaVal,"mvaval/F");
 
         consumes<reco::TrackToTrackingParticleAssociator>(edm::InputTag(associatorName));
 
@@ -165,8 +174,6 @@ NtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         simRecColl = associator->associateSimToReco(handle,simTPhandle);
 
         for (int i = 0; i<(int)handle->size(); i++){
-                mvaValues->clear();
-                mvaValues->reserve(1);
                 Track tk = (handle->at(i));
                 tvFake = 1;
                 tvNdof = tk.ndof();
@@ -241,7 +248,9 @@ NtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                 }
 
 //                tvMvaVal = -99999;
-                mvaValues->push_back(tmvaReader_->EvaluateMVA("BDTG"));
+		if(doMVA_){
+	                tvMvaVal = tmvaReader_->EvaluateMVA("BDTG");
+		}
 
                 outTree->Fill();
         }
@@ -258,9 +267,9 @@ NtupleMaker::beginJob()
 void 
 NtupleMaker::endJob() 
 {
-//        outFile->cd();
-//        outTree->Write();
-//        outFile->Close();
+        outFile->cd();
+        outTree->Write();
+        outFile->Close();
 }
 
 Point NtupleMaker::getBestVertex(TrackBaseRef track, VertexCollection vertices)
