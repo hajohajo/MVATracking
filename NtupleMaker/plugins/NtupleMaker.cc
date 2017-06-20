@@ -70,32 +70,37 @@ NtupleMaker::NtupleMaker(const edm::ParameterSet& Params)
         simTPToken = consumes<TrackingParticleCollection>(simSource);
 
 	doMVA_ = false;
-	std::string mvaFileName;
+//	std::string mvaFileName;
+	vector<string> mvaFileNames;
 	if(Params.exists("doMVA")) doMVA_ = Params.getParameter<bool>("doMVA");
-	if(Params.exists("mvaFileName"))mvaFileName = Params.getParameter<string>("mvaFileName");
+	if(Params.exists("mvaType")) mvaTypes_ = Params.getParameter<vector<string> >("mvaType");
+	if(Params.exists("mvaFileName")) mvaFileNames = Params.getParameter<vector<string> >("mvaFileName");
 
 	if(doMVA_){
-	        TMVA::Reader* tmvaReader_ = new TMVA::Reader("!Color:Silent");
-	        tmvaReader_->AddVariable("pt",&tvpt);
-	        tmvaReader_->AddVariable("lostmidfrac",&tvLostMidFrac);
-	        tmvaReader_->AddVariable("minlost",&tvMinLost);
-	        tmvaReader_->AddVariable("nhits",&tvNhits);
-	        tmvaReader_->AddVariable("relpterr",&tvRelPtErr);
-	        tmvaReader_->AddVariable("eta",&tvEta);
-	        tmvaReader_->AddVariable("chi2n_no1Dmod",&tvChi2n_no1Dmod);
-	        tmvaReader_->AddVariable("chi2n",&tvChi2n);
-	        tmvaReader_->AddVariable("nlayerslost",&tvNlayersLost);
-	        tmvaReader_->AddVariable("nlayers3D",&tvNlayers3D);
-	        tmvaReader_->AddVariable("nlayers",&tvNlayers);
-	        tmvaReader_->AddVariable("ndof",&tvNdof);
-	        if(mvaType_ == "Prompt"){
-	                tmvaReader_->AddVariable("absd0PV",&tvAbsD0PV);
-	                tmvaReader_->AddVariable("absdzPV",&tvAbsDzPV);
-	                tmvaReader_->AddVariable("absdz",&tvAbsDz);
-	                tmvaReader_->AddVariable("absd0",&tvAbsD0);
-	        }
+		for(unsigned int i = 0; i < mvaTypes_.size(); i++){
+		        TMVA::Reader* tmvaReader_ = new TMVA::Reader("!Color:Silent");
+		        tmvaReader_->AddVariable("pt",&tvpt);
+		        tmvaReader_->AddVariable("lostmidfrac",&tvLostMidFrac);
+		        tmvaReader_->AddVariable("minlost",&tvMinLost);
+		        tmvaReader_->AddVariable("nhits",&tvNhits);
+		        tmvaReader_->AddVariable("relpterr",&tvRelPtErr);
+		        tmvaReader_->AddVariable("eta",&tvEta);
+		        tmvaReader_->AddVariable("chi2n_no1Dmod",&tvChi2n_no1Dmod);
+		        tmvaReader_->AddVariable("chi2n",&tvChi2n);
+		        tmvaReader_->AddVariable("nlayerslost",&tvNlayersLost);
+		        tmvaReader_->AddVariable("nlayers3D",&tvNlayers3D);
+		        tmvaReader_->AddVariable("nlayers",&tvNlayers);
+		        tmvaReader_->AddVariable("ndof",&tvNdof);
+		        if(mvaTypes_[i] == "Prompt"){
+		                tmvaReader_->AddVariable("absd0PV",&tvAbsD0PV);
+		                tmvaReader_->AddVariable("absdzPV",&tvAbsDzPV);
+		                tmvaReader_->AddVariable("absdz",&tvAbsDz);
+		                tmvaReader_->AddVariable("absd0",&tvAbsD0);
+		        }
 
-		tmvaReader_->BookMVA("BDTG",mvaFileName);
+			tmvaReader_->BookMVA("BDTG",mvaFileNames[i]);
+			tmvaReaders_.push_back(tmvaReader_);
+		}
 	}
 
 	outTree = new TTree("NtupleTree","",1);
@@ -119,8 +124,8 @@ NtupleMaker::NtupleMaker(const edm::ParameterSet& Params)
         outTree->Branch("absd0",&tvAbsD0,"absd0/F");
         outTree->Branch("absdzPV",&tvAbsDzPV,"absdzPV/F");
         outTree->Branch("absd0PV",&tvAbsD0PV,"absd0PV/F");
-//        outTree->Branch("mvavals","std::vector<float>",&d_mvaValues);
-	outTree->Branch("mvaval",&tvMvaVal,"mvaval/F");
+        outTree->Branch("mvavals","std::vector<float>",&mvaValues);
+//	outTree->Branch("mvaval",&tvMvaVal,"mvaval/F");
 
         consumes<reco::TrackToTrackingParticleAssociator>(edm::InputTag(associatorName));
 
@@ -174,6 +179,9 @@ NtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         simRecColl = associator->associateSimToReco(handle,simTPhandle);
 
         for (int i = 0; i<(int)handle->size(); i++){
+		std::cout<<"A TRACK HAS BEEN DETECTED"<<std::endl;
+		mvaValues->clear();
+		mvaValues->reserve(mvaTypes_.size());
                 Track tk = (handle->at(i));
                 tvFake = 1;
                 tvNdof = tk.ndof();
@@ -249,7 +257,9 @@ NtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
 //                tvMvaVal = -99999;
 		if(doMVA_){
-	                tvMvaVal = tmvaReader_->EvaluateMVA("BDTG");
+			for(unsigned int i = 0; i < tmvaReaders_.size();i++){
+		                mvaValues->push_back(tmvaReaders_[i]->EvaluateMVA("BDTG"));
+			}
 		}
 
                 outTree->Fill();

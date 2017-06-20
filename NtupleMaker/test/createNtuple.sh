@@ -21,7 +21,7 @@ fi
 touch $condorFile
 chmod a+x $condorFile
 
-filelist=testlist.txt
+filelist=eoslist.txt
 
 #Create batch job submission scripts for each ntuple
 

@@ -1,2 +1,0 @@
-root://eoscms.cern.ch//eos/cms/store/relval/CMSSW_9_2_0/RelValTTbar_13/GEN-SIM-DIGI-RAW/PU25ns_91X_upgrade2017_realistic_v5_PU50-v1/10000/085D5AAF-9E40-E711-B12A-0025905A609E.root
-root://eoscms.cern.ch//eos/cms/store/relval/CMSSW_9_2_0/RelValTTbar_13/GEN-SIM-DIGI-RAW/PU25ns_91X_upgrade2017_realistic_v5_PU50-v1/10000/0A300E72-9E40-E711-B12C-0CC47A4C8EB6.root
