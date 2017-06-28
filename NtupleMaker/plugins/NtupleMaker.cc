@@ -179,7 +179,6 @@ NtupleMaker::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
         simRecColl = associator->associateSimToReco(handle,simTPhandle);
 
         for (int i = 0; i<(int)handle->size(); i++){
-		std::cout<<"A TRACK HAS BEEN DETECTED"<<std::endl;
 		mvaValues->clear();
 		mvaValues->reserve(mvaTypes_.size());
                 Track tk = (handle->at(i));

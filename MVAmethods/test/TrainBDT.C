@@ -26,7 +26,7 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	std::string ntuplePath="../NtupleMaker/test/outputTuple/";
 	std::string step = "InitialStep";
 	//How many files to read for training
-	Int_t const Nmax=16;
+	Int_t const Nmax=10;
 	//How many files to read for testing
 	Int_t const Ntest=4;
 
@@ -49,7 +49,6 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 			continue;
 		}
 		trees[i] = (TTree*)files[i]->Get("NtupleTree");
-//		files[i]->Close();
 		
 /*		if(inFile->IsZombie())
 		{
@@ -99,7 +98,7 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	dataloader->PrepareTrainingAndTestTree(mycut,"SplitMode=Random:NormMode=NumEvents:!V");
 
 	factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDTG",
-                           "!H:!V:NTrees=3000::BoostType=Grad:Shrinkage=0.20:NegWeightTreatment=Pray:UseBaggedBoost:GradBaggingFraction=0.5:nCuts=30:MaxDepth=5" );
+                           "!H:!V:NTrees=2000::BoostType=Grad:Shrinkage=0.20:NegWeightTreatment=Pray:UseBaggedBoost:GradBaggingFraction=0.5:nCuts=15:MaxDepth=5" );
 
 	factory->TrainAllMethods();
 	factory->TestAllMethods();

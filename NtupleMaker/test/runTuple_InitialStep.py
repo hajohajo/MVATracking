@@ -7,7 +7,7 @@ import FWCore.ParameterSet.Config as cms
 import sys
 from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process('RECO',eras.Run2_25ns) #eras.Run2_2017_trackingPhase1CA)
+process = cms.Process('RECO',eras.Run2_2017) #eras.Run2_2017_trackingPhase1CA)
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
