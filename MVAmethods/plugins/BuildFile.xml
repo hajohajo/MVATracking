@@ -1,3 +1,7 @@
+<export>
+</export>
+
+<library name="MVATrackingMVAmethods_plugins" file="*.cpp">
 <use name="FWCore/Framework"/>
 <use name="FWCore/PluginManager"/>
 <use name="FWCore/ParameterSet"/>
@@ -53,3 +57,5 @@
 
 <Flags CXXFLAGS="-g"/>
 <flags EDM_PLUGIN="1"/>
+
+</library>

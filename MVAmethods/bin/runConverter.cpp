@@ -1,5 +1,5 @@
 //#include "MVATracking/MVAmethods/interface/BDTConverter.h"
-#include "../interface/BDTConverter.h"
+#include "MVATracking/MVAmethods/interface/BDTConverter.h"
 #include <TString.h>
 int main(int argc, char** argv)
 {
