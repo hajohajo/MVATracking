@@ -1,4 +1,4 @@
-#include "MWalker/TrackAnalyzer/interface/BDTConverter.h"
+#include "MVATracking/MVAmethods/interface/BDTConverter.h"
 
 BDTConverter::BDTConverter(TString weightsFileName, TString outFileName) 
 {
