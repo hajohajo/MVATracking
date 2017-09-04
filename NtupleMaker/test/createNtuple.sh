@@ -7,7 +7,7 @@ LOGDIR=$MAINDIR/logs
 CMSDIR=$CMSSW_BASE/src
 
 condorFile=$SCRIPTDIR/submitJobsNtuple.sh
-ALGOS=(InitialStep)
+ALGOS=(JetCoreRegionalStep)
 
 mkdir -p $SCRIPTDIR
 
@@ -21,7 +21,8 @@ fi
 touch $condorFile
 chmod a+x $condorFile
 
-filelist=eoslist.txt
+#filelist=eoslist.txt
+filelist=QCDlist.txt
 
 #Create batch job submission scripts for each ntuple
 

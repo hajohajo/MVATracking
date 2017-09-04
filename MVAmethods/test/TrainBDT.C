@@ -23,12 +23,14 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	TMVA::Tools::Instance();
 
 	//Folder where Ntuples for training are
-	std::string ntuplePath="../NtupleMaker/test/outputTuple/";
-	std::string step = "InitialStep";
+	std::string ntuplePath="../../NtupleMaker/test/outputTuple/";
+	std::string step = "LowPtTripletStep";
 	//How many files to read for training
-	Int_t const Nmax=10;
+//	Int_t const Nmax=10;
+	Int_t const Nmax=15;
 	//How many files to read for testing
-	Int_t const Ntest=4;
+//	Int_t const Ntest=4;
+	Int_t const Ntest=1;
 
 	Int_t const Ntotal=Nmax+Ntest;
 
@@ -38,31 +40,34 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	TFile* files[Ntotal];
 	TTree* trees[Ntotal];
 	TFile* inFile;
-	for(int i = 0; i<(Nmax+Ntest); i++)
+	Int_t point = 0;
+	for(int i = 0; i<Ntotal; i++)
 	{
-		TString fileName=Form("%soutput_%s_%d.root",ntuplePath.c_str(),step.c_str(),i);
+		if(point>60)
+		{
+			break;
+		}
+		TString fileName=Form("%soutput_%s_%d.root",ntuplePath.c_str(),step.c_str(),point);
 		files[i] = new TFile(fileName);
 		if(files[i]->IsZombie())
 		{
 			std::cout<<"Zombie!"<<std::endl;
-			i++;
+			point++;
+			i--;
 			continue;
 		}
 		trees[i] = (TTree*)files[i]->Get("NtupleTree");
+		point++;
 		
-/*		if(inFile->IsZombie())
-		{
-			i++;
-			continue;
-		}
-*/
-
 	}
 	TFile* outputFile = TFile::Open( outfileName, "RECREATE");
 
 	TMVA::Factory *factory = new TMVA::Factory("MyClassification", outputFile,"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
 	TMVA::DataLoader *dataloader;
 	dataloader=new TMVA::DataLoader("dataset");
+
+//How to set event by event weights
+//factory->SetWeightExpression( "<YourWeightExpression>" );
 
 	   //USED VARIABLES
 	dataloader->AddVariable("pt",'F');
@@ -77,6 +82,7 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	dataloader->AddVariable("nlayers3D",'F');
 	dataloader->AddVariable("nlayers",'F');
 	dataloader->AddVariable("ndof",'F');
+	
 	dataloader->AddVariable("absd0PV",'F');
 	dataloader->AddVariable("absdzPV",'F');
 	dataloader->AddVariable("absdz",'F');
@@ -84,22 +90,23 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 
 	TCut signal = "fake == 0";
 	TCut background = "fake == 1";
-	TCut mycut =""; //Optional precut to training data
+	TCut mycut =""; //"pt<=1"; //Optional precut to training data
 
 	for(int i =0;i<Nmax;i++){
-		dataloader->AddTree(trees[i],"signal",1.0,signal,TMVA::Types::kTraining);
-		dataloader->AddTree(trees[i],"background",1.0,background,TMVA::Types::kTraining);
+		dataloader->AddTree(trees[i],"Signal",1.0,signal,TMVA::Types::kTraining);
+		dataloader->AddTree(trees[i],"Background",1.0,background,TMVA::Types::kTraining);
 	}
 	for(int i =Nmax;i<Ntotal; i++){
-                dataloader->AddTree(trees[i],"signal",1.0,signal,TMVA::Types::kTesting);
-                dataloader->AddTree(trees[i],"background",1.0,background,TMVA::Types::kTesting);
+                dataloader->AddTree(trees[i],"Signal",1.0,signal,TMVA::Types::kTesting);
+                dataloader->AddTree(trees[i],"Background",1.0,background,TMVA::Types::kTesting);
 	}
 
+	dataloader->SetWeightExpression( "1.0/pt");
 	dataloader->PrepareTrainingAndTestTree(mycut,"SplitMode=Random:NormMode=NumEvents:!V");
 
 	factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDTG",
-                           "!H:!V:NTrees=2000::BoostType=Grad:Shrinkage=0.20:NegWeightTreatment=Pray:UseBaggedBoost:GradBaggingFraction=0.5:nCuts=15:MaxDepth=5" );
-
+                           "!H:!V:VarTransform=I:NTrees=2000::BoostType=Grad:Shrinkage=0.2:NegWeightTreatment=Pray:UseBaggedBoost:GradBaggingFraction=0.5:nCuts=60:MaxDepth=10" );
+//"!H:!V:VarTransform=G,D:
 	factory->TrainAllMethods();
 	factory->TestAllMethods();
 	factory->EvaluateAllMethods();

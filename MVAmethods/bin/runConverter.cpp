@@ -19,7 +19,7 @@ int main(int argc, char** argv)
 //  std::string names[10]={"InitialStep","LowPtQuadStep","HighPtTripletStep","LowPtTripletStep","DetachedQuadStep","DetachedTripletStep","MixedTripletStep",
 //			"PixelLessStep","TobTecStep","JetCoreRegionalStep"};
 
-  std::string names[1]={"InitialStep"};
+  std::string names[1]={"LowPtTripletStep"};
 
   std::cout<<argc<<std::endl;
   if(argc == 1){
