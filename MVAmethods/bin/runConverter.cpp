@@ -1,9 +1,10 @@
-//#include "MVATracking/MVAmethods/interface/BDTConverter.h"
 #include "MVATracking/MVAmethods/interface/BDTConverter.h"
 #include <TString.h>
 int main(int argc, char** argv)
 {
 /*
+    Names of the iterations
+
     "InitialStep"
     "LowPtQuadStep"
     "HighPtTripletStep"
@@ -16,14 +17,14 @@ int main(int argc, char** argv)
     "JetCoreRegionalStep"
 */
 
-//  std::string names[10]={"InitialStep","LowPtQuadStep","HighPtTripletStep","LowPtTripletStep","DetachedQuadStep","DetachedTripletStep","MixedTripletStep",
-//			"PixelLessStep","TobTecStep","JetCoreRegionalStep"};
-
-  std::string names[1]={"LowPtTripletStep"};
+  std::string names[1]={"InitialStep"};
 
   std::cout<<argc<<std::endl;
   if(argc == 1){
-    for(int i = 0; i < 1; i++){
+    int iterations_ = std::min(names.size(),4);
+
+    //PROMPT ITERATIONS
+    for(int i = 0; i < iterations_; i++){
       TString wfname = TString::Format("./MVASelector%s_Phase1.xml",names[i].c_str());
       TString rfname = TString::Format("./MVASelector%s_Phase1.root",names[i].c_str());
       BDTConverter* converter = new BDTConverter(wfname,rfname);   
@@ -47,7 +48,9 @@ int main(int argc, char** argv)
       
       converter->convert();
     }
-/*    for(int i = 4; i < 10; i++){
+
+    //NON-PROMT ITERATIONS
+    for(int i = 4; i < iterations_; i++){
       TString wfname = TString::Format("./MVASelector%s_Phase1.xml",names[i].c_str());
       TString rfname = TString::Format("./MVASelector%s_Phase1.root",names[i].c_str());
       BDTConverter* converter = new BDTConverter(wfname,rfname);   
@@ -67,7 +70,8 @@ int main(int argc, char** argv)
       
       converter->convert();
     }
-*/
+
+
   }else if(argc == 3){
     TString wfname = TString::Format("%s",argv[1]);
     TString rfname = wfname;

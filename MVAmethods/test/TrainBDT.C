@@ -24,18 +24,24 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 
 	//Folder where Ntuples for training are
 	std::string ntuplePath="../../NtupleMaker/test/outputTuple/";
-	std::string step = "LowPtTripletStep";
+	std::string step = "InitialStep";
+
+	//Make sure not to cause biasing by using same
+	//files in training and test
+
 	//How many files to read for training
-//	Int_t const Nmax=10;
-	Int_t const Nmax=15;
+	Int_t const Nmax=10;
 	//How many files to read for testing
-//	Int_t const Ntest=4;
-	Int_t const Ntest=1;
+	Int_t const Ntest=4;
 
 	Int_t const Ntotal=Nmax+Ntest;
 
 
 	std::cout << "==> Start TMVARegression" << std::endl;
+
+
+	//Loading the root files. Could do with some cleaning up.
+	//Also a hack to skip possible zombie files
 
 	TFile* files[Ntotal];
 	TTree* trees[Ntotal];
@@ -60,14 +66,12 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 		point++;
 		
 	}
-	TFile* outputFile = TFile::Open( outfileName, "RECREATE");
 
+	TFile* outputFile = TFile::Open( outfileName, "RECREATE");
 	TMVA::Factory *factory = new TMVA::Factory("MyClassification", outputFile,"!V:!Silent:Color:DrawProgressBar:AnalysisType=Classification");
 	TMVA::DataLoader *dataloader;
 	dataloader=new TMVA::DataLoader("dataset");
 
-//How to set event by event weights
-//factory->SetWeightExpression( "<YourWeightExpression>" );
 
 	   //USED VARIABLES
 	dataloader->AddVariable("pt",'F');
@@ -82,7 +86,8 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	dataloader->AddVariable("nlayers3D",'F');
 	dataloader->AddVariable("nlayers",'F');
 	dataloader->AddVariable("ndof",'F');
-	
+
+	//For non-prompt steps comment these four out	
 	dataloader->AddVariable("absd0PV",'F');
 	dataloader->AddVariable("absdzPV",'F');
 	dataloader->AddVariable("absdz",'F');
@@ -90,7 +95,7 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 
 	TCut signal = "fake == 0";
 	TCut background = "fake == 1";
-	TCut mycut =""; //"pt<=1"; //Optional precut to training data
+	TCut mycut ="";  //Optional precut to training data
 
 	for(int i =0;i<Nmax;i++){
 		dataloader->AddTree(trees[i],"Signal",1.0,signal,TMVA::Types::kTraining);
@@ -101,12 +106,16 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
                 dataloader->AddTree(trees[i],"Background",1.0,background,TMVA::Types::kTesting);
 	}
 
-	dataloader->SetWeightExpression( "1.0/pt");
+	//Setting 1.0/pt weight helps in the lowPtTripletStep
+//	dataloader->SetWeightExpression( "1.0/pt");
+
+
 	dataloader->PrepareTrainingAndTestTree(mycut,"SplitMode=Random:NormMode=NumEvents:!V");
 
+	//Defining the method and its hyperparameters for the training
 	factory->BookMethod(dataloader, TMVA::Types::kBDT, "BDTG",
                            "!H:!V:VarTransform=I:NTrees=2000::BoostType=Grad:Shrinkage=0.2:NegWeightTreatment=Pray:UseBaggedBoost:GradBaggingFraction=0.5:nCuts=60:MaxDepth=10" );
-//"!H:!V:VarTransform=G,D:
+
 	factory->TrainAllMethods();
 	factory->TestAllMethods();
 	factory->EvaluateAllMethods();

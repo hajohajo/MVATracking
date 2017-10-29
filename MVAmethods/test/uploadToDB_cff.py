@@ -31,41 +31,32 @@ process.source = cms.Source("EmptySource",
 
 process.gbrwrappermaker = cms.EDAnalyzer('MVADBWriter',
                                          files=cms.vstring("MVASelectorInitialStep_Phase1.root",
-								"MVASelectorLowPtQuadStep_Phase1.root",
-								"MVASelectorHighPtTripletStep_Phase1.root",
-								"MVASelectorLowPtTripletStep_Phase1.root",
-								"MVASelectorDetachedQuadStep_Phase1.root",
-								"MVASelectorDetachedTripletStep_Phase1.root",
-								"MVASelectorPixelPairStep_Phase1.root",
-								"MVASelectorMixedTripletStep_Phase1.root",
-								"MVASelectorPixelLessStep_Phase1.root",
-								"MVASelectorTobTecStep_Phase1.root",
-								"MVASelectorJetCoreRegionalStep_Phase1.root"),
-#,"MVASelectorLowPtQuadStep_Phase1.root","MVASelectorHighPtTripletStep_Phase1.root",
-#							"MVASelectorLowPtTripletStep_Phase1.root","MVASelectorDetachedQuadStep_Phase1.root",
-#							"MVASelectorDetachedTripletStep_Phase1.root","MVASelectorMixedTripletStep_Phase1.root",
-#							"MVASelectorPixelLessStep_Phase1.root","MVASelectorTobTecStep_Phase1.root",
-#							"MVASelectorJetCoreRegionalStep_Phase1.root",),
-					 labels=cms.vstring("MVASelectorInitialStep_Phase1_retrain",
-								"MVASelectorLowPtQuadStep_Phase1_retrain",
-								"MVASelectorHighPtTripletStep_Phase1_retrain",
-								"MVASelectorLowPtTripletStep_Phase1_retrain",
-								"MVASelectorDetachedQuadStep_Phase1_retrain",
-								"MVASelectorDetachedTripletStep_Phase1_retrain",
-								"MVASelectorPixelPairStep_Phase1_retrain",
-								"MVASelectorMixedTripletStep_Phase1_retrain",
-								"MVASelectorPixelLessStep_Phase1_retrain",
-								"MVASelectorTobTecStep_Phase1_retrain",
-								"MVASelectorJetCoreRegionalStep_Phase1_retrain"),
-#,"MVASelectorLowPtQuadStep_Phase1","MVASelectorHighPtTripletStep_Phase1",
-#							"MVASelectorLowPtTripletStep_Phase1","MVASelectorDetachedQuadStep_Phase1","MVASelectorDetachedTripletStep_Phase1",
-#							"MVASelectorMixedTripletStep_Phase1","MVASelectorPixelLessStep_Phase1","MVASelectorTobTecStep_Phase1",
-#							"MVASelectorJetCoreRegionalStep_Phase1"),
+#								"MVASelectorLowPtQuadStep_Phase1.root",
+#								"MVASelectorHighPtTripletStep_Phase1.root",
+#								"MVASelectorLowPtTripletStep_Phase1.root",
+#								"MVASelectorDetachedQuadStep_Phase1.root",
+#								"MVASelectorDetachedTripletStep_Phase1.root",
+#								"MVASelectorPixelPairStep_Phase1.root",
+#								"MVASelectorMixedTripletStep_Phase1.root",
+#								"MVASelectorPixelLessStep_Phase1.root",
+#								"MVASelectorTobTecStep_Phase1.root",
+#								"MVASelectorJetCoreRegionalStep_Phase1.root"),
+					 labels=cms.vstring("MVASelectorInitialStep_Phase1_retrain", 
+#								"MVASelectorLowPtQuadStep_Phase1_retrain",
+#								"MVASelectorHighPtTripletStep_Phase1_retrain",
+#								"MVASelectorLowPtTripletStep_Phase1_retrain",
+#								"MVASelectorDetachedQuadStep_Phase1_retrain",
+#								"MVASelectorDetachedTripletStep_Phase1_retrain",
+#								"MVASelectorPixelPairStep_Phase1_retrain",
+#								"MVASelectorMixedTripletStep_Phase1_retrain",
+#								"MVASelectorPixelLessStep_Phase1_retrain",
+#								"MVASelectorTobTecStep_Phase1_retrain",
+#								"MVASelectorJetCoreRegionalStep_Phase1_retrain"),
 )
 
 process.load("CondCore.DBCommon.CondDBCommon_cfi")
 # output database (in this case local sqlite file)
-process.CondDBCommon.connect = 'sqlite_file:GBRWrapper_13TeV_922.db'
+process.CondDBCommon.connect = 'sqlite_file:GBRWrapper_13TeV_930.db'
 
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",
     process.CondDBCommon,
@@ -75,47 +66,47 @@ process.PoolDBOutputService = cms.Service("PoolDBOutputService",
         record = cms.string('MVASelectorInitialStep_Phase1_retrain'),
         tag = cms.string('MVASelectorInitialStep_Phase1_retrain')
       ),
-      cms.PSet(
-        record = cms.string('MVASelectorLowPtQuadStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorLowPtQuadStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorHighPtTripletStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorHighPtTripletStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorLowPtTripletStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorLowPtTripletStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorDetachedQuadStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorDetachedQuadStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorDetachedTripletStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorDetachedTripletStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorPixelPairStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorPixelPairStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorMixedTripletStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorMixedTripletStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorPixelLessStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorPixelLessStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorTobTecStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorTobTecStep_Phase1_retrain')
-      ),
-      cms.PSet(
-        record = cms.string('MVASelectorJetCoreRegionalStep_Phase1_retrain'),
-        tag = cms.string('MVASelectorJetCoreRegionalStep_Phase1_retrain')
-      ),
-  )
+#      cms.PSet(
+#        record = cms.string('MVASelectorLowPtQuadStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorLowPtQuadStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorHighPtTripletStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorHighPtTripletStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorLowPtTripletStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorLowPtTripletStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorDetachedQuadStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorDetachedQuadStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorDetachedTripletStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorDetachedTripletStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorPixelPairStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorPixelPairStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorMixedTripletStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorMixedTripletStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorPixelLessStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorPixelLessStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorTobTecStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorTobTecStep_Phase1_retrain')
+#      ),
+#      cms.PSet(
+#        record = cms.string('MVASelectorJetCoreRegionalStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorJetCoreRegionalStep_Phase1_retrain')
+#      ),
+    )
 )
 
 process.upload = cms.Path(process.gbrwrappermaker)
