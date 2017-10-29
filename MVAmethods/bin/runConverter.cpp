@@ -5,10 +5,12 @@ int main(int argc, char** argv)
 /*
     Names of the iterations
 
+    PROMPTS
     "InitialStep"
     "LowPtQuadStep"
     "HighPtTripletStep"
     "LowPtTripletStep"
+    NON PROMPTS
     "DetachedQuadStep"
     "DetachedTripletStep"
     "MixedTripletStep"
@@ -17,16 +19,18 @@ int main(int argc, char** argv)
     "JetCoreRegionalStep"
 */
 
-  std::string names[1]={"InitialStep"};
+  std::string name = "InitialStep";
+
+  //Select if step is prompt or not
+  bool isPrompt = true;
 
   std::cout<<argc<<std::endl;
   if(argc == 1){
-    int iterations_ = std::min(names.size(),4);
 
     //PROMPT ITERATIONS
-    for(int i = 0; i < iterations_; i++){
-      TString wfname = TString::Format("./MVASelector%s_Phase1.xml",names[i].c_str());
-      TString rfname = TString::Format("./MVASelector%s_Phase1.root",names[i].c_str());
+    if(isPrompt){
+      TString wfname = TString::Format("./MVASelector%s_Phase1.xml",name.c_str());
+      TString rfname = TString::Format("./MVASelector%s_Phase1.root",name.c_str());
       BDTConverter* converter = new BDTConverter(wfname,rfname);   
       
       converter->addVariable("pt");
@@ -50,9 +54,9 @@ int main(int argc, char** argv)
     }
 
     //NON-PROMT ITERATIONS
-    for(int i = 4; i < iterations_; i++){
-      TString wfname = TString::Format("./MVASelector%s_Phase1.xml",names[i].c_str());
-      TString rfname = TString::Format("./MVASelector%s_Phase1.root",names[i].c_str());
+    else{
+      TString wfname = TString::Format("./MVASelector%s_Phase1.xml",name.c_str());
+      TString rfname = TString::Format("./MVASelector%s_Phase1.root",name.c_str());
       BDTConverter* converter = new BDTConverter(wfname,rfname);   
       
       converter->addVariable("pt");

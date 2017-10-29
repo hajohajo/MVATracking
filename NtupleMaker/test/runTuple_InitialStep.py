@@ -7,7 +7,7 @@ import FWCore.ParameterSet.Config as cms
 import sys
 from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process('RECO',eras.Run2_2017) #eras.Run2_2017_trackingPhase1CA)
+process = cms.Process('RECO',eras.Run2_2017)
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -63,11 +63,11 @@ process.load("SimGeneral.TrackingAnalysis.trackingParticles_cfi")
 
 usePhase1 = True
 
-#process.load("CondCore.DBCommon.CondDBCommon_cfi")
+#process.load("CondCore.CondDB.CondDB_cfi")
 # input database (in this case local sqlite file)
-#process.CondDBCommon.connect = 'sqlite_file:./GBRWrapper_13TeV_900pre2.db'
+#process.CondDB.connect = 'sqlite_file:./GBRWrapper_13TeV_930.db'
 #process.PoolDBESSource = cms.ESSource("PoolDBESSource",
-#    process.CondDBCommon,
+#    process.CondDB,
 #    DumpStat=cms.untracked.bool(True),
 #    toGet = cms.VPSet(
 #      cms.PSet(

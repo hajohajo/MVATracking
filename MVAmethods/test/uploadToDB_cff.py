@@ -6,13 +6,6 @@ process.load("FWCore.MessageService.MessageLogger_cfi")
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1) )
 
-#process.source = cms.Source("PoolSource",
-    ## replace 'myfile.root' with the source file you want to use
-    #fileNames = cms.untracked.vstring(
-        #'file:myfile.root'
-    #)
-#)
-
 #    "InitialStep"
 #    "LowPtQuadStep"
 #    "HighPtTripletStep"
@@ -40,7 +33,8 @@ process.gbrwrappermaker = cms.EDAnalyzer('MVADBWriter',
 #								"MVASelectorMixedTripletStep_Phase1.root",
 #								"MVASelectorPixelLessStep_Phase1.root",
 #								"MVASelectorTobTecStep_Phase1.root",
-#								"MVASelectorJetCoreRegionalStep_Phase1.root"),
+#								"MVASelectorJetCoreRegionalStep_Phase1.root",
+					 ),
 					 labels=cms.vstring("MVASelectorInitialStep_Phase1_retrain", 
 #								"MVASelectorLowPtQuadStep_Phase1_retrain",
 #								"MVASelectorHighPtTripletStep_Phase1_retrain",
@@ -51,15 +45,18 @@ process.gbrwrappermaker = cms.EDAnalyzer('MVADBWriter',
 #								"MVASelectorMixedTripletStep_Phase1_retrain",
 #								"MVASelectorPixelLessStep_Phase1_retrain",
 #								"MVASelectorTobTecStep_Phase1_retrain",
-#								"MVASelectorJetCoreRegionalStep_Phase1_retrain"),
+#								"MVASelectorJetCoreRegionalStep_Phase1_retrain",
+					 )
 )
 
-process.load("CondCore.DBCommon.CondDBCommon_cfi")
+process.load("CondCore.CondDB.CondDB_cfi")
 # output database (in this case local sqlite file)
-process.CondDBCommon.connect = 'sqlite_file:GBRWrapper_13TeV_930.db'
+process.CondDB.connect = 'sqlite_file:GBRWrapper_13TeV_930.db'
+
 
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",
-    process.CondDBCommon,
+    process.CondDB,
+
     timetype = cms.untracked.string('runnumber'),
     toPut = cms.VPSet(
       cms.PSet(

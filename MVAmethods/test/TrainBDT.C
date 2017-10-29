@@ -18,13 +18,16 @@
 
 using namespace TMVA;
 
+std::string step = "InitialStep";
+bool isPrompt_ = true;
+
 void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 {
 	TMVA::Tools::Instance();
 
 	//Folder where Ntuples for training are
 	std::string ntuplePath="../../NtupleMaker/test/outputTuple/";
-	std::string step = "InitialStep";
+//	std::string step = "InitialStep";
 
 	//Make sure not to cause biasing by using same
 	//files in training and test
@@ -87,11 +90,13 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	dataloader->AddVariable("nlayers",'F');
 	dataloader->AddVariable("ndof",'F');
 
-	//For non-prompt steps comment these four out	
-	dataloader->AddVariable("absd0PV",'F');
-	dataloader->AddVariable("absdzPV",'F');
-	dataloader->AddVariable("absdz",'F');
-	dataloader->AddVariable("absd0",'F');
+	//For prompt steps
+	if(isPrompt_){
+		dataloader->AddVariable("absd0PV",'F');
+		dataloader->AddVariable("absdzPV",'F');
+		dataloader->AddVariable("absdz",'F');
+		dataloader->AddVariable("absd0",'F');
+	}
 
 	TCut signal = "fake == 0";
 	TCut background = "fake == 1";
