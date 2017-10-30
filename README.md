@@ -1,5 +1,5 @@
 # MVATracking
-Tools to retrain BDT classifiers used in Iterative Track Reconstruction using TMVA package
+Tools to retrain BDT classifiers used in Iterative Track Reconstruction using TMVA package. Based on previous work by M.Walker: https://github.com/mhwalker/MWalker/tree/master/TrackAnalyzer
 
 ## Retraining BDTs in CMSSW Iterative Tracking
 
