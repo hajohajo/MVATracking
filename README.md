@@ -6,6 +6,7 @@ Tools to retrain BDT classifiers used in Iterative Track Reconstruction using TM
 ### Setting up environment and cloning repo
 ```
 cmsrel CMSSW_9_3_0_pre3
+cd CMSSW_9_3_0_pre3/src
 cmsenv
 git clone https://github.com/hajohajo/MVATracking.git
 scram b -j 4
