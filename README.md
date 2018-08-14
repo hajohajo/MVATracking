@@ -50,4 +50,4 @@ This converts the .xml to a .root file that can be loaded into a database file w
 ```
 cmsRun uploadToDB_cff.py
 ```
-This creates a GBRWrapper_13TeV_930.db file that can contains the new weights for the iterations included in the uploadToDB_cff.py. It can now be copied back to MVATracking/NtupleMaker/test/ and start training the next iteration, or if all iterations are included, it can be deployed to production.
+This creates a GBRWrapper_13TeV_930.db file that can contains the new weights for the iterations included in the uploadToDB_cff.py. It can now be copied back to MVATracking/NtupleMaker/test/ and start training the next iteration, or if all iterations are included, it can be deployed to production. Note that enabling the new weights requires you to modify the runTuples_InitialStep.py file so that the now weights are read and used to replace the default ones. Also the tracks collection has to be changed from "initialStep" to the step you desire to retrain.
