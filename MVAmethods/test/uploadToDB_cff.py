@@ -51,7 +51,7 @@ process.gbrwrappermaker = cms.EDAnalyzer('MVADBWriter',
 
 process.load("CondCore.CondDB.CondDB_cfi")
 # output database (in this case local sqlite file)
-process.CondDB.connect = 'sqlite_file:GBRWrapper_13TeV_930.db'
+process.CondDB.connect = 'sqlite_file:GBRWrapper_13TeV_102.db'
 
 
 process.PoolDBOutputService = cms.Service("PoolDBOutputService",

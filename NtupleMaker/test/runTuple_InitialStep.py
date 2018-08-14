@@ -7,7 +7,9 @@ import FWCore.ParameterSet.Config as cms
 import sys
 from Configuration.StandardSequences.Eras import eras
 
-process = cms.Process('RECO',eras.Run2_2017)
+
+process = cms.Process('RECO',eras.Run2_2018)
+
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -17,9 +19,9 @@ process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_cff')
 process.load('Configuration.StandardSequences.RawToDigi_cff')
-process.load('Configuration.StandardSequences.L1Reco_cff')
 process.load('Configuration.StandardSequences.Reconstruction_cff')
-process.load('Configuration.StandardSequences.EndOfProcess_cff')
+process.load('Configuration.StandardSequences.Validation_cff')
+process.load('DQMOffline.Configuration.DQMOfflineMC_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
@@ -63,17 +65,18 @@ process.load("SimGeneral.TrackingAnalysis.trackingParticles_cfi")
 
 usePhase1 = True
 
+##Uncomment suitable portions based on what weights are already retrained and saved to the .db file
 #process.load("CondCore.CondDB.CondDB_cfi")
-# input database (in this case local sqlite file)
-#process.CondDB.connect = 'sqlite_file:./GBRWrapper_13TeV_930.db'
+## input database (in this case local sqlite file)
+#process.CondDB.connect = 'sqlite_file:./GBRWrapper_13TeV_102.db'
 #process.PoolDBESSource = cms.ESSource("PoolDBESSource",
 #    process.CondDB,
 #    DumpStat=cms.untracked.bool(True),
 #    toGet = cms.VPSet(
 #      cms.PSet(
 #        record = cms.string('GBRWrapperRcd'),
-#        label = cms.untracked.string('MVASelectorInitialStep_Phase1'),
-#        tag = cms.string('MVASelectorInitialStep_Phase1')
+#        label = cms.untracked.string('MVASelectorInitialStep_Phase1_retrain'),
+#        tag = cms.string('MVASelectorInitialStep_Phase1_retrain')
 #      ),
 #      cms.PSet(
 #        record = cms.string('GBRWrapperRcd'),
@@ -120,8 +123,11 @@ usePhase1 = True
 #        label = cms.untracked.string('MVASelectorJetCoreRegionalStep_Phase1'),
 #        tag = cms.string('MVASelectorJetCoreRegionalStep_Phase1')
 #      ),
-#    )
-#)
+    )
+)
+
+#Replace the weights of initialStep BDT classifier by uncommenting
+#process.initialStep.mva.GBRForestLabel = 'MVASelectorInitialStep_Phase1_retrain'
 
 
 process.load("SimTracker.TrackAssociatorProducers.quickTrackAssociatorByHits_cfi")
@@ -137,28 +143,25 @@ process.myAnalyzer = cms.EDAnalyzer("NtupleMaker",
                                     associator=cms.string("quickTrackAssociatorByHits"),
                                     )
 
+
 # Other statements
+process.mix.playback = True
+process.mix.digitizers = cms.PSet()
+for a in process.aliases: delattr(process, a)
+process.RandomNumberGeneratorService.restoreStateLabel=cms.untracked.string("randomEngineStateProducer")
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2017_realistic', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:phase1_2018_realistic', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
-process.L1Reco_step = cms.Path(process.L1Reco)
+#process.L1Reco_step = cms.Path(process.L1Reco)
 process.reconstruction_step = cms.Path(process.reconstruction*process.tpClusterProducer*process.quickTrackAssociatorByHits*process.myAnalyzer)
-process.endjob_step = cms.EndPath(process.endOfProcess)
+#process.endjob_step = cms.EndPath(process.endOfProcess)
 process.FEVTDEBUGHLToutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
 
 # Schedule definition
-process.schedule = cms.Schedule(process.raw2digi_step,process.L1Reco_step,process.reconstruction_step,process.endjob_step)
-
-
-# customisation of the process.
-
-# Automatic addition of the customisation function from SLHCUpgradeSimulations.Configuration.combinedCustoms
-#from SLHCUpgradeSimulations.Configuration.combinedCustoms import cust_2017 
-
-#call to customisation function cust_2017 imported from SLHCUpgradeSimulations.Configuration.combinedCustoms
-#process = cust_2017(process)
+#process.schedule = cms.Schedule(process.raw2digi_step,process.L1Reco_step,process.reconstruction_step,process.endjob_step)
+process.schedule = cms.Schedule(process.raw2digi_step,process.reconstruction_step)
 
 print sys.argv
 

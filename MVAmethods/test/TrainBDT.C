@@ -33,9 +33,9 @@ void TrainBDT(const char* outfileName="dataset/BDT_train_output.root")
 	//files in training and test
 
 	//How many files to read for training
-	Int_t const Nmax=10;
+	Int_t const Nmax=2;
 	//How many files to read for testing
-	Int_t const Ntest=4;
+	Int_t const Ntest=1;
 
 	Int_t const Ntotal=Nmax+Ntest;
 
